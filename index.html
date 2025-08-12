@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Days of the Week Quiz</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗾 Japanese Days of the Week Quiz</h1>
+            <p>Test your knowledge of Japanese weekdays!</p>
+        </header>
+
+        <main>
+            <div id="quiz-section" class="quiz-section">
+                <div class="score-board">
+                    <div class="score-item">
+                        <span class="label">Score:</span>
+                        <span id="score">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="label">Question:</span>
+                        <span id="question-number">1</span> / <span id="total-questions">7</span>
+                    </div>
+                </div>
+
+                <div class="question-card">
+                    <div class="question-type">
+                        <button id="japanese-to-english" class="mode-btn active">Japanese → English</button>
+                        <button id="english-to-japanese" class="mode-btn">English → Japanese</button>
+                    </div>
+
+                    <div class="question">
+                        <h2 id="question-text">月曜日</h2>
+                        <p id="question-hint">What day is this in English?</p>
+                    </div>
+
+                    <div class="options">
+                        <button class="option-btn" data-answer="monday">Monday</button>
+                        <button class="option-btn" data-answer="tuesday">Tuesday</button>
+                        <button class="option-btn" data-answer="wednesday">Wednesday</button>
+                        <button class="option-btn" data-answer="thursday">Thursday</button>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button id="new-quiz-btn" class="control-btn">New Quiz</button>
+                    <button id="skip-question-btn" class="control-btn">Skip Question</button>
+                </div>
+            </div>
+
+            <div id="results-section" class="results-section hidden">
+                <div class="results-card">
+                    <h2>Quiz Complete! 🎉</h2>
+                    <div class="final-score">
+                        <span>Final Score: </span>
+                        <span id="final-score">0</span> / <span id="final-total">7</span>
+                    </div>
+                    <div class="percentage">
+                        <span id="percentage">0</span>%
+                    </div>
+                    <div class="results-actions">
+                        <button id="try-again-btn" class="control-btn primary">Try Again</button>
+                        <button id="review-btn" class="control-btn">Review Answers</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="review-section" class="review-section hidden">
+                <h2>Review: Days of the Week</h2>
+                <div class="review-list" id="review-list">
+                    <!-- Review items will be populated by JavaScript -->
+                </div>
+                <button id="back-to-quiz-btn" class="control-btn">Back to Quiz</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

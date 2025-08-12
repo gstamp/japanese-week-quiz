@@ -1,0 +1,560 @@
+/* Modern, clean styling for the Japanese Week Quiz app */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #333;
+    overflow-x: hidden;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(255,255,255,0.05) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+    position: relative;
+    z-index: 1;
+}
+
+header h1 {
+    font-size: 2.8em;
+    margin-bottom: 15px;
+    font-weight: 600;
+    background: linear-gradient(45deg, #fff, #f0f3ff, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% {
+        background-position: -200% center;
+    }
+    50% {
+        background-position: 200% center;
+    }
+}
+
+header p {
+    font-size: 1.3em;
+    opacity: 0.95;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.quiz-section, .results-section, .review-section {
+    background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    padding: 35px;
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.15),
+        0 10px 20px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+    flex: 1;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.quiz-section::before, .results-section::before, .review-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+    border-radius: 25px 25px 0 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.score-board {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8faff 0%, #e8f2ff 100%);
+    border-radius: 15px;
+    border: 2px solid rgba(102, 126, 234, 0.1);
+    box-shadow:
+        0 8px 16px rgba(102, 126, 234, 0.1),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.score-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: fit-content;
+}
+
+.score-item .label {
+    font-size: 1em;
+    color: #4a5568;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.score-item span:not(.label) {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #667eea;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1;
+}
+
+.question-card {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.question-type {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.mode-btn {
+    padding: 12px 24px;
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(45deg, #667eea, #764ba2) border-box;
+    color: #667eea;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.mode-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+}
+
+.mode-btn:hover::before {
+    left: 0;
+}
+
+.mode-btn:hover {
+    color: white;
+    transform: translateY(-3px);
+    box-shadow:
+        0 10px 25px rgba(102, 126, 234, 0.4),
+        0 5px 10px rgba(102, 126, 234, 0.2);
+}
+
+.mode-btn.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    box-shadow:
+        0 8px 20px rgba(102, 126, 234, 0.3),
+        0 4px 8px rgba(102, 126, 234, 0.2);
+}
+
+.question {
+    margin-bottom: 30px;
+}
+
+.question h2 {
+    font-size: 3.2em;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, #2d3748, #4a5568, #2d3748);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 500;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.question h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+.question p {
+    font-size: 1.1em;
+    color: #666;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.option-btn {
+    padding: 18px 28px;
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #e2e8f0, #cbd5e0) border-box;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1.1em;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+    color: #4a5568;
+}
+
+.option-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f7fafc, #edf2f7);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+}
+
+.option-btn:hover::before {
+    left: 0;
+}
+
+.option-btn:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow:
+        0 15px 30px rgba(102, 126, 234, 0.2),
+        0 8px 16px rgba(102, 126, 234, 0.1);
+    border-color: transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #667eea, #764ba2) border-box;
+}
+
+.option-btn.correct {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    border-color: transparent;
+    box-shadow:
+        0 12px 25px rgba(72, 187, 120, 0.4),
+        0 6px 12px rgba(72, 187, 120, 0.2);
+    animation: correctPulse 0.6s ease;
+}
+
+.option-btn.incorrect {
+    background: linear-gradient(135deg, #f56565, #e53e3e);
+    color: white;
+    border-color: transparent;
+    box-shadow:
+        0 12px 25px rgba(245, 101, 101, 0.4),
+        0 6px 12px rgba(245, 101, 101, 0.2);
+    animation: incorrectShake 0.6s ease;
+}
+
+@keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes incorrectShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.option-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.control-btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 700;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+        0 8px 16px rgba(102, 126, 234, 0.3),
+        0 4px 8px rgba(102, 126, 234, 0.2);
+}
+
+.control-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #764ba2, #f093fb);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+}
+
+.control-btn:hover:not(:disabled)::before {
+    left: 0;
+}
+
+.control-btn:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow:
+        0 15px 30px rgba(102, 126, 234, 0.4),
+        0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.control-btn:disabled {
+    background: linear-gradient(135deg, #a0aec0, #cbd5e0);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    opacity: 0.6;
+}
+
+.control-btn.primary {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    box-shadow:
+        0 8px 16px rgba(72, 187, 120, 0.3),
+        0 4px 8px rgba(72, 187, 120, 0.2);
+}
+
+.control-btn.primary::before {
+    background: linear-gradient(135deg, #38a169, #2f855a);
+}
+
+.control-btn.primary:hover {
+    box-shadow:
+        0 15px 30px rgba(72, 187, 120, 0.4),
+        0 8px 16px rgba(72, 187, 120, 0.3);
+}
+
+.results-card {
+    text-align: center;
+}
+
+.results-card h2 {
+    font-size: 2.8em;
+    margin-bottom: 35px;
+    background: linear-gradient(45deg, #48bb78, #38a169, #2f855a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: celebration 2s ease-in-out;
+}
+
+@keyframes celebration {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1) rotate(-2deg); }
+    75% { transform: scale(1.1) rotate(2deg); }
+}
+
+.final-score {
+    font-size: 2.2em;
+    margin-bottom: 20px;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.percentage {
+    font-size: 3.5em;
+    font-weight: bold;
+    background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 35px;
+    animation: countUp 1.5s ease-out;
+}
+
+@keyframes countUp {
+    from {
+        transform: scale(0.5) rotate(-10deg);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.results-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.review-section h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 2em;
+}
+
+.review-list {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.review-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8faff 0%, #e8f2ff 100%);
+    border-radius: 15px;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    box-shadow:
+        0 4px 8px rgba(102, 126, 234, 0.1),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.review-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #667eea, #764ba2);
+    border-radius: 0 4px 4px 0;
+}
+
+.review-item:hover {
+    transform: translateX(8px);
+    box-shadow:
+        0 8px 16px rgba(102, 126, 234, 0.2),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.review-item .japanese {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.review-item .english {
+    font-size: 1.2em;
+    color: #666;
+}
+
+.review-item .romaji {
+    font-size: 1em;
+    color: #999;
+    font-style: italic;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+
+    .question h2 {
+        font-size: 2em;
+    }
+
+    .options {
+        grid-template-columns: 1fr;
+    }
+
+    .results-actions {
+        flex-direction: column;
+    }
+
+    .score-board {
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .score-item {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .score-item .label {
+        font-size: 0.95em;
+    }
+
+    .score-item span:last-child {
+        font-size: 1.4em;
+    }
+
+    .quiz-section, .results-section, .review-section {
+        padding: 20px;
+    }
+}

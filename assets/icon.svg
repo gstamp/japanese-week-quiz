@@ -1,0 +1,14 @@
+<!-- Simple SVG icon for the Japanese Week Quiz app -->
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="128" cy="128" r="120" fill="#667eea" stroke="#5a6fd8" stroke-width="8"/>
+
+  <!-- Japanese character styling -->
+  <text x="128" y="140" text-anchor="middle" font-family="serif" font-size="80" fill="white" font-weight="bold">日</text>
+
+  <!-- Small decorative elements -->
+  <circle cx="80" cy="80" r="4" fill="white" opacity="0.8"/>
+  <circle cx="176" cy="80" r="4" fill="white" opacity="0.8"/>
+  <circle cx="80" cy="176" r="4" fill="white" opacity="0.8"/>
+  <circle cx="176" cy="176" r="4" fill="white" opacity="0.8"/>
+</svg>
