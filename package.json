@@ -19,7 +19,10 @@
     "quiz",
     "education"
   ],
-  "author": "Glen Stampoultzis",
+  "author": {
+    "name": "Glen Stampoultzis",
+    "email": "glen@example.com"
+  },
   "license": "MIT",
   "devDependencies": {
     "electron": "^31.0.0",
@@ -29,6 +32,7 @@
   "build": {
     "appId": "com.glenstampoultzis.japanese-week-quiz",
     "productName": "Japanese Week Quiz",
+    "copyright": "Copyright © 2025 Glen Stampoultzis",
     "directories": {
       "output": "dist"
     },
@@ -94,7 +98,10 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "category": "Education",
+      "description": "Learn Japanese days of the week through interactive quizzes",
+      "maintainer": "Glen Stampoultzis <glen@example.com>"
     },
     "nsis": {
       "oneClick": false,

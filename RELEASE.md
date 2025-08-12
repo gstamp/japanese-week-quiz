@@ -64,24 +64,10 @@ Follow [semantic versioning](https://semver.org/):
 Before creating a release:
 - [ ] Test the application locally
 - [ ] Update version in `package.json` if needed
+- [ ] Update author email in `package.json` if using a different email
 - [ ] Update `README.md` with any new features
 - [ ] Commit and push all changes
 - [ ] Create and push the version tag
 - [ ] Monitor the GitHub Actions workflow
 - [ ] Test the released binaries on different platforms
 
-## Troubleshooting
-
-**Build fails?**
-- Check the Actions logs for specific errors
-- Ensure `package.json` has correct build configuration
-- Verify all source files are committed
-
-**macOS build fails?**
-- This is expected locally (requires macOS)
-- GitHub Actions handles macOS builds automatically
-
-**Release not created?**
-- Ensure you pushed a tag starting with `v` (e.g., `v1.0.0`)
-- Check that the workflow completed successfully
-- Look for errors in the "create-release" job
