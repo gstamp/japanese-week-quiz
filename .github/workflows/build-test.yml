@@ -1,9 +1,11 @@
 name: Build Test
 
 on:
-  workflow_dispatch:  # Manual trigger only
-  pull_request:       # Test builds on PRs
+  push:
+    branches: [ main, master ]  # Trigger on commits to main/master
+  pull_request:               # Test builds on PRs
     branches: [ main, master ]
+  workflow_dispatch:          # Manual trigger
 
 jobs:
   build-test:
