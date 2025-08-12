@@ -97,20 +97,59 @@ npm run build:all
 
 ## Summary
 
-**What works from Windows:**
+**Local Development:**
 - ✅ **Windows builds**: Full installer and portable versions
 - ✅ **Linux builds**: TAR.GZ archive that works on any Linux distribution
 - ❌ **macOS builds**: Requires macOS (Apple security restrictions)
 
-You can successfully create Windows and Linux distributions from your Windows machine!
+**GitHub Actions (Automatic):**
+- ✅ **All platforms**: Windows, macOS, and Linux builds via GitHub runners
+- ✅ **Automatic releases**: Creates GitHub releases with all platform builds
+- ✅ **Cross-platform**: Builds everything from the cloud, no local restrictions
+
+### GitHub Actions Workflows
+
+This repository includes automated build workflows:
+
+1. **Release Workflow** (`.github/workflows/release.yml`):
+   - Triggers on version tags (e.g., `v1.0.0`, `v1.2.3`)
+   - Builds for Windows, macOS, and Linux automatically
+   - Creates GitHub releases with all platform binaries
+   - Can be triggered manually from GitHub Actions tab
+
+2. **Build Test Workflow** (`.github/workflows/build-test.yml`):
+   - Triggers on pull requests and manual runs
+   - Tests builds without creating releases
+   - Useful for testing changes before release
+
+### Creating a Release
+
+1. **Tag a new version:**
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+
+2. **Automatic build**: GitHub Actions will:
+   - Build for Windows (installer + portable)
+   - Build for macOS (DMG + ZIP, Intel + Apple Silicon)
+   - Build for Linux (AppImage + DEB + TAR.GZ)
+   - Create a GitHub release with all files
+
+3. **Manual trigger**: Go to GitHub Actions tab and run "Build and Release" manually
 
 ### Output Formats
 
+**Local builds** (what you can build on Windows):
 - **Windows**: NSIS installer (.exe) and Portable executable
-- **macOS**: DMG disk image and ZIP archive (supports both Intel and Apple Silicon) *[Requires macOS to build]*
-- **Linux**: TAR.GZ archive and directory (universal Linux format)
+- **Linux**: TAR.GZ archive
 
-All builds will be created in the `dist/` folder.
+**GitHub Actions builds** (automatic with releases):
+- **Windows**: NSIS installer (.exe) and Portable executable
+- **macOS**: DMG disk image and ZIP archive (Intel + Apple Silicon)
+- **Linux**: AppImage (universal), DEB (Debian/Ubuntu), and TAR.GZ archive
+
+All builds will be created in the `dist/` folder locally, or attached to GitHub releases automatically.
 
 ## How to Use
 
@@ -153,12 +192,17 @@ The application is built with:
 
 ```
 japanese-week-quiz/
-├── main.js          # Electron main process
-├── index.html       # App interface
-├── styles.css       # Styling and layout
-├── renderer.js      # Quiz logic and interactions
-├── package.json     # Dependencies and scripts
-└── README.md        # This file
+├── .github/
+│   └── workflows/
+│       ├── release.yml       # Automated release builds
+│       └── build-test.yml    # Test builds for PRs
+├── main.js                   # Electron main process
+├── index.html                # App interface
+├── styles.css                # Styling and layout
+├── renderer.js               # Quiz logic and interactions
+├── package.json              # Dependencies and scripts
+├── README.md                 # This file
+└── RELEASE.md                # Release guide
 ```
 
 ## Contributing

@@ -1,0 +1,46 @@
+name: Build Test
+
+on:
+  workflow_dispatch:  # Manual trigger only
+  pull_request:       # Test builds on PRs
+    branches: [ main, master ]
+
+jobs:
+  build-test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            platform: win
+          - os: macos-latest
+            platform: mac
+          - os: ubuntu-latest
+            platform: linux
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build:${{ matrix.platform }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload build artifacts (test)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-build-test
+          path: dist/
+          retention-days: 7  # Keep test builds for 7 days only
