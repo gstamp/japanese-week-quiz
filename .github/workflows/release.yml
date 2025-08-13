@@ -6,6 +6,9 @@ on:
       - 'v*.*.*'  # Triggers on version tags like v1.0.0, v1.2.3
   workflow_dispatch:  # Allows manual triggering from GitHub UI
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ${{ matrix.os }}
@@ -35,7 +38,7 @@ jobs:
         run: npm ci
 
       - name: Build application
-        run: npm run build:${{ matrix.platform }}
+        run: npm run build:${{ matrix.platform }} -- --publish=never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
