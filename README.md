@@ -166,7 +166,7 @@ All builds will be created in the `dist/` folder locally, or attached to GitHub 
    - Get immediate feedback on your answer
 
 4. **Navigate:**
-   - The app automatically advances after answering (0.6 seconds)
+   - The app automatically advances after answering
    - Click "Skip Question" or press Enter to skip without answering
    - View your final score and percentage at the end
    - Use "Review Answers" to study all days with pronunciations

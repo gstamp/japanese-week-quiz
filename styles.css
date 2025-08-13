@@ -242,24 +242,29 @@ main {
 }
 
 .question-type {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .mode-btn {
-    padding: 12px 24px;
+    padding: 10px 16px;
     border: 2px solid transparent;
     background: linear-gradient(white, white) padding-box,
                 linear-gradient(45deg, #667eea, #764ba2) border-box;
     color: #667eea;
-    border-radius: 30px;
+    border-radius: 25px;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 600;
+    font-size: 14px;
     position: relative;
     overflow: hidden;
+    white-space: nowrap;
 }
 
 .mode-btn::before {

@@ -184,36 +184,43 @@ class JapaneseWeekQuiz {
     this.daysOfWeek = [
       {
         japanese: "月曜日",
+        hiragana: "げつようび",
         romaji: "getsuyōbi",
         english: "monday",
       },
       {
         japanese: "火曜日",
+        hiragana: "かようび",
         romaji: "kayōbi",
         english: "tuesday",
       },
       {
         japanese: "水曜日",
+        hiragana: "すいようび",
         romaji: "suiyōbi",
         english: "wednesday",
       },
       {
         japanese: "木曜日",
+        hiragana: "もくようび",
         romaji: "mokuyōbi",
         english: "thursday",
       },
       {
         japanese: "金曜日",
+        hiragana: "きんようび",
         romaji: "kinyōbi",
         english: "friday",
       },
       {
         japanese: "土曜日",
+        hiragana: "どようび",
         romaji: "doyōbi",
         english: "saturday",
       },
       {
         japanese: "日曜日",
+        hiragana: "にちようび",
         romaji: "nichiyōbi",
         english: "sunday",
       },
@@ -222,7 +229,10 @@ class JapaneseWeekQuiz {
     this.currentQuestions = [];
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.isJapaneseToEnglish = true;
+
+    // Quiz modes: 'jp-en', 'en-jp', 'kanji-hiragana', 'hiragana-kanji'
+    this.currentMode = "jp-en";
+
     this.answeredQuestions = [];
     this.autoAdvanceTimeout = null;
     this.ttsEnabled = true; // Text-to-speech enabled by default
@@ -246,6 +256,8 @@ class JapaneseWeekQuiz {
       // Mode buttons
       japaneseToEnglish: document.getElementById("japanese-to-english"),
       englishToJapanese: document.getElementById("english-to-japanese"),
+      kanjiToHiragana: document.getElementById("kanji-to-hiragana"),
+      hiraganaToKanji: document.getElementById("hiragana-to-kanji"),
 
       // Question display
       questionText: document.getElementById("question-text"),
@@ -281,10 +293,16 @@ class JapaneseWeekQuiz {
   setupEventListeners() {
     // Mode selection
     this.elements.japaneseToEnglish.addEventListener("click", () =>
-      this.setMode(true)
+      this.setMode("jp-en")
     );
     this.elements.englishToJapanese.addEventListener("click", () =>
-      this.setMode(false)
+      this.setMode("en-jp")
+    );
+    this.elements.kanjiToHiragana.addEventListener("click", () =>
+      this.setMode("kanji-hiragana")
+    );
+    this.elements.hiraganaToKanji.addEventListener("click", () =>
+      this.setMode("hiragana-kanji")
     );
 
     // Option buttons
@@ -354,18 +372,29 @@ class JapaneseWeekQuiz {
     });
   }
 
-  setMode(isJapaneseToEnglish) {
-    this.isJapaneseToEnglish = isJapaneseToEnglish;
+  setMode(mode) {
+    this.currentMode = mode;
 
     // Update button states
     this.elements.japaneseToEnglish.classList.toggle(
       "active",
-      isJapaneseToEnglish
+      mode === "jp-en"
     );
     this.elements.englishToJapanese.classList.toggle(
       "active",
-      !isJapaneseToEnglish
+      mode === "en-jp"
     );
+    this.elements.kanjiToHiragana.classList.toggle(
+      "active",
+      mode === "kanji-hiragana"
+    );
+    this.elements.hiraganaToKanji.classList.toggle(
+      "active",
+      mode === "hiragana-kanji"
+    );
+
+    // Update TTS toggle UI since some modes disable TTS
+    this.updateTTSToggleUI();
 
     // Start new quiz with the new mode
     this.startNewQuiz();
@@ -406,19 +435,46 @@ class JapaneseWeekQuiz {
     this.showFeedback(feedback, 1000);
   }
 
+  // Check if TTS is effectively disabled (either by user or by mode)
+  isTTSEffectivelyDisabled() {
+    return (
+      !this.ttsEnabled ||
+      this.currentMode === "kanji-hiragana" ||
+      this.currentMode === "hiragana-kanji"
+    );
+  }
+
   updateTTSToggleUI() {
-    if (this.ttsEnabled) {
+    const isEffectivelyDisabled = this.isTTSEffectivelyDisabled();
+    const isDisabledByMode =
+      this.currentMode === "kanji-hiragana" ||
+      this.currentMode === "hiragana-kanji";
+
+    if (isEffectivelyDisabled) {
+      this.elements.ttsToggle.classList.remove("active");
+
+      if (isDisabledByMode && this.ttsEnabled) {
+        // User wants TTS on, but it's disabled by mode
+        this.elements.ttsToggle.setAttribute(
+          "title",
+          "Text-to-speech disabled for character recognition modes"
+        );
+        this.elements.ttsToggle.style.opacity = "0.6";
+      } else {
+        // User has TTS disabled
+        this.elements.ttsToggle.setAttribute(
+          "title",
+          "Text-to-speech is OFF - Click to enable"
+        );
+        this.elements.ttsToggle.style.opacity = "1";
+      }
+    } else {
       this.elements.ttsToggle.classList.add("active");
       this.elements.ttsToggle.setAttribute(
         "title",
         "Text-to-speech is ON - Click to disable"
       );
-    } else {
-      this.elements.ttsToggle.classList.remove("active");
-      this.elements.ttsToggle.setAttribute(
-        "title",
-        "Text-to-speech is OFF - Click to enable"
-      );
+      this.elements.ttsToggle.style.opacity = "1";
     }
   }
 
@@ -444,16 +500,35 @@ class JapaneseWeekQuiz {
     this.elements.questionNumber.textContent = this.currentQuestionIndex + 1;
     this.elements.totalQuestions.textContent = this.currentQuestions.length;
 
-    if (this.isJapaneseToEnglish) {
-      this.elements.questionText.textContent = currentDay.japanese;
-      this.elements.questionHint.textContent = `What day is this in English? (${currentDay.romaji})`;
-      this.displayEnglishOptions(currentDay.english);
-    } else {
-      this.elements.questionText.textContent = this.capitalizeFirst(
-        currentDay.english
-      );
-      this.elements.questionHint.textContent = "What day is this in Japanese?";
-      this.displayJapaneseOptions(currentDay.japanese);
+    switch (this.currentMode) {
+      case "jp-en":
+        this.elements.questionText.textContent = currentDay.japanese;
+        this.elements.questionHint.textContent = `What day is this in English? (${currentDay.romaji})`;
+        this.displayEnglishOptions(currentDay.english);
+        break;
+
+      case "en-jp":
+        this.elements.questionText.textContent = this.capitalizeFirst(
+          currentDay.english
+        );
+        this.elements.questionHint.textContent =
+          "What day is this in Japanese (Kanji)?";
+        this.displayJapaneseOptions(currentDay.japanese);
+        break;
+
+      case "kanji-hiragana":
+        this.elements.questionText.textContent = currentDay.japanese;
+        this.elements.questionHint.textContent =
+          "What is the hiragana reading for this kanji?";
+        this.displayHiraganaOptions(currentDay.hiragana);
+        break;
+
+      case "hiragana-kanji":
+        this.elements.questionText.textContent = currentDay.hiragana;
+        this.elements.questionHint.textContent =
+          "What is the kanji for this hiragana reading?";
+        this.displayJapaneseOptions(currentDay.japanese);
+        break;
     }
 
     // Reset button states
@@ -461,7 +536,8 @@ class JapaneseWeekQuiz {
     this.elements.skipQuestionBtn.disabled = false;
 
     // Auto-speak the question text (with a small delay for better UX)
-    if (this.ttsEnabled) {
+    // Skip TTS for hiragana ↔ kanji modes since pronunciation doesn't help with character recognition
+    if (!this.isTTSEffectivelyDisabled()) {
       setTimeout(() => {
         this.speakCurrentQuestion();
       }, 500);
@@ -484,6 +560,14 @@ class JapaneseWeekQuiz {
     });
   }
 
+  displayHiraganaOptions(correctAnswer) {
+    const options = this.generateHiraganaOptions(correctAnswer);
+    this.elements.optionBtns.forEach((btn, index) => {
+      btn.textContent = options[index];
+      btn.dataset.answer = options[index];
+    });
+  }
+
   generateEnglishOptions(correctAnswer) {
     const allDays = this.daysOfWeek.map((day) => day.english);
     const incorrectDays = allDays.filter((day) => day !== correctAnswer);
@@ -500,14 +584,35 @@ class JapaneseWeekQuiz {
     return options;
   }
 
+  generateHiraganaOptions(correctAnswer) {
+    const allDays = this.daysOfWeek.map((day) => day.hiragana);
+    const incorrectDays = allDays.filter((day) => day !== correctAnswer);
+    const selectedIncorrect = this.shuffleArray(incorrectDays).slice(0, 3);
+    const options = this.shuffleArray([correctAnswer, ...selectedIncorrect]);
+    return options;
+  }
+
   selectAnswer(button) {
     if (button.disabled) return;
 
     const selectedAnswer = button.dataset.answer;
     const currentDay = this.currentQuestions[this.currentQuestionIndex];
-    const correctAnswer = this.isJapaneseToEnglish
-      ? currentDay.english
-      : currentDay.japanese;
+
+    let correctAnswer;
+    switch (this.currentMode) {
+      case "jp-en":
+        correctAnswer = currentDay.english;
+        break;
+      case "en-jp":
+        correctAnswer = currentDay.japanese;
+        break;
+      case "kanji-hiragana":
+        correctAnswer = currentDay.hiragana;
+        break;
+      case "hiragana-kanji":
+        correctAnswer = currentDay.japanese;
+        break;
+    }
 
     const isCorrect = selectedAnswer === correctAnswer;
 
@@ -517,7 +622,7 @@ class JapaneseWeekQuiz {
       selectedAnswer,
       correctAnswer,
       isCorrect,
-      mode: this.isJapaneseToEnglish ? "jp-to-en" : "en-to-jp",
+      mode: this.currentMode,
     });
 
     if (isCorrect) {
@@ -543,10 +648,10 @@ class JapaneseWeekQuiz {
 
     this.updateScore();
 
-    // Automatically move to next question after 0.6 seconds
+    // Automatically move to next question after 0.9 seconds
     this.autoAdvanceTimeout = setTimeout(() => {
       this.nextQuestion();
-    }, 600);
+    }, 900);
   }
 
   skipQuestion() {
@@ -562,9 +667,22 @@ class JapaneseWeekQuiz {
     // Mark this question as skipped (no score change)
     // Show the correct answer briefly before moving on
     const currentDay = this.currentQuestions[this.currentQuestionIndex];
-    const correctAnswer = this.isJapaneseToEnglish
-      ? currentDay.english
-      : currentDay.japanese;
+
+    let correctAnswer;
+    switch (this.currentMode) {
+      case "jp-en":
+        correctAnswer = currentDay.english;
+        break;
+      case "en-jp":
+        correctAnswer = currentDay.japanese;
+        break;
+      case "kanji-hiragana":
+        correctAnswer = currentDay.hiragana;
+        break;
+      case "hiragana-kanji":
+        correctAnswer = currentDay.japanese;
+        break;
+    }
 
     // Highlight the correct answer
     this.elements.optionBtns.forEach((btn) => {
@@ -577,7 +695,7 @@ class JapaneseWeekQuiz {
     // Move to next question after a brief pause to show the correct answer
     setTimeout(() => {
       this.nextQuestion();
-    }, 800);
+    }, 1200);
   }
 
   nextQuestion() {
@@ -655,6 +773,18 @@ class JapaneseWeekQuiz {
   }
 
   speakCurrentQuestion() {
+    // Check if TTS should be disabled for hiragana ↔ kanji modes
+    if (
+      this.currentMode === "kanji-hiragana" ||
+      this.currentMode === "hiragana-kanji"
+    ) {
+      this.showFeedback(
+        "TTS not needed for character recognition practice",
+        1500
+      );
+      return;
+    }
+
     if (!this.textToSpeech.isSupported() || !this.ttsEnabled) {
       if (!this.ttsEnabled) {
         this.showFeedback("Text-to-speech is disabled", 1000);
@@ -666,12 +796,16 @@ class JapaneseWeekQuiz {
 
     const currentDay = this.currentQuestions[this.currentQuestionIndex];
 
-    if (this.isJapaneseToEnglish) {
-      // Speaking Japanese text
-      this.textToSpeech.speakJapanese(currentDay.japanese);
-    } else {
-      // Speaking English text
-      this.textToSpeech.speakEnglish(currentDay.english);
+    switch (this.currentMode) {
+      case "jp-en":
+        // Speaking Japanese kanji
+        this.textToSpeech.speakJapanese(currentDay.japanese);
+        break;
+      case "en-jp":
+        // Speaking English text
+        this.textToSpeech.speakEnglish(currentDay.english);
+        break;
+      // Note: kanji-hiragana and hiragana-kanji cases are handled above
     }
   }
 
