@@ -9,8 +9,18 @@
 <body>
     <div class="container">
         <header>
-            <h1>🗾 Japanese Days of the Week Quiz</h1>
-            <p>Test your knowledge of Japanese weekdays!</p>
+            <div class="header-content">
+                <div class="title-section">
+                    <h1>🗾 Japanese Days of the Week Quiz</h1>
+                    <p>Test your knowledge of Japanese weekdays!</p>
+                </div>
+                <div class="settings-section">
+                    <button id="tts-toggle" class="tts-toggle active" title="Toggle text-to-speech">
+                        <span class="tts-icon">🔊</span>
+                        <span class="tts-label">TTS</span>
+                    </button>
+                </div>
+            </div>
         </header>
 
         <main>
@@ -33,7 +43,10 @@
                     </div>
 
                     <div class="question">
-                        <h2 id="question-text">月曜日</h2>
+                        <div class="question-header">
+                            <h2 id="question-text">月曜日</h2>
+                            <button id="speak-btn" class="speak-btn" title="Hear pronunciation">🔊</button>
+                        </div>
                         <p id="question-hint">What day is this in English?</p>
                     </div>
 

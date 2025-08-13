@@ -11,6 +11,8 @@ An Electron desktop application to help you learn and practice the days of the w
 - **Interactive Learning:**
   - Randomized questions for better learning
   - Immediate feedback on answers
+  - Audio feedback for correct/incorrect answers
+  - Text-to-speech pronunciation (automatic + on-demand)
   - Score tracking and percentage calculation
   - Review section with all days, pronunciations, and meanings
 

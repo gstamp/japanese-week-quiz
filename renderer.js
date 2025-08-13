@@ -87,6 +87,98 @@ class SoundManager {
   }
 }
 
+// Text-to-Speech utility class for pronunciation
+class TextToSpeech {
+  constructor() {
+    this.speechSynthesis = window.speechSynthesis;
+    this.japaneseVoice = null;
+    this.englishVoice = null;
+    this.initVoices();
+  }
+
+  initVoices() {
+    // Wait for voices to load
+    if (this.speechSynthesis.getVoices().length === 0) {
+      this.speechSynthesis.addEventListener("voiceschanged", () => {
+        this.loadVoices();
+      });
+    } else {
+      this.loadVoices();
+    }
+  }
+
+  loadVoices() {
+    const voices = this.speechSynthesis.getVoices();
+
+    // Find Japanese voice (prefer native Japanese voices)
+    this.japaneseVoice = voices.find(
+      (voice) =>
+        voice.lang.startsWith("ja") ||
+        voice.name.toLowerCase().includes("japanese") ||
+        voice.name.toLowerCase().includes("kyoko") ||
+        voice.name.toLowerCase().includes("otoya")
+    );
+
+    // Find English voice (prefer natural sounding ones)
+    this.englishVoice =
+      voices.find((voice) => voice.lang.startsWith("en") && voice.default) ||
+      voices.find((voice) => voice.lang.startsWith("en"));
+
+    console.log("Available voices loaded:", {
+      japanese: this.japaneseVoice?.name || "None found",
+      english: this.englishVoice?.name || "None found",
+    });
+  }
+
+  speakJapanese(text, rate = 0.8) {
+    this.speak(text, this.japaneseVoice, "ja-JP", rate);
+  }
+
+  speakEnglish(text, rate = 1.0) {
+    this.speak(text, this.englishVoice, "en-US", rate);
+  }
+
+  speak(text, voice, lang, rate = 1.0) {
+    if (!this.speechSynthesis) {
+      console.warn("Speech synthesis not supported");
+      return;
+    }
+
+    // Cancel any ongoing speech
+    this.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    if (voice) {
+      utterance.voice = voice;
+    }
+
+    utterance.lang = lang;
+    utterance.rate = rate;
+    utterance.volume = 0.8;
+    utterance.pitch = 1.0;
+
+    // Error handling
+    utterance.onerror = (event) => {
+      console.warn("Speech synthesis error:", event.error);
+    };
+
+    this.speechSynthesis.speak(utterance);
+  }
+
+  // Check if TTS is available
+  isSupported() {
+    return !!this.speechSynthesis;
+  }
+
+  // Stop any ongoing speech
+  stop() {
+    if (this.speechSynthesis) {
+      this.speechSynthesis.cancel();
+    }
+  }
+}
+
 class JapaneseWeekQuiz {
   constructor() {
     this.daysOfWeek = [
@@ -133,9 +225,11 @@ class JapaneseWeekQuiz {
     this.isJapaneseToEnglish = true;
     this.answeredQuestions = [];
     this.autoAdvanceTimeout = null;
+    this.ttsEnabled = true; // Text-to-speech enabled by default
 
-    // Initialize sound manager
+    // Initialize sound manager and text-to-speech
     this.soundManager = new SoundManager();
+    this.textToSpeech = new TextToSpeech();
 
     this.initializeElements();
     this.setupEventListeners();
@@ -156,6 +250,8 @@ class JapaneseWeekQuiz {
       // Question display
       questionText: document.getElementById("question-text"),
       questionHint: document.getElementById("question-hint"),
+      speakBtn: document.getElementById("speak-btn"),
+      ttsToggle: document.getElementById("tts-toggle"),
 
       // Options
       optionBtns: document.querySelectorAll(".option-btn"),
@@ -219,6 +315,19 @@ class JapaneseWeekQuiz {
     this.elements.backToQuizBtn.addEventListener("click", () =>
       this.showQuiz()
     );
+
+    // Speak button
+    this.elements.speakBtn.addEventListener("click", () =>
+      this.speakCurrentQuestion()
+    );
+
+    // Initialize TTS toggle
+    this.elements.ttsToggle.addEventListener("click", () => {
+      this.toggleTTS();
+    });
+
+    // Set initial TTS toggle state
+    this.updateTTSToggleUI();
 
     // Keyboard support
     document.addEventListener("keydown", (e) => {
@@ -288,6 +397,46 @@ class JapaneseWeekQuiz {
     return shuffled;
   }
 
+  toggleTTS() {
+    this.ttsEnabled = !this.ttsEnabled;
+    this.updateTTSToggleUI();
+
+    // Show brief feedback
+    const feedback = this.ttsEnabled ? "TTS Enabled" : "TTS Disabled";
+    this.showFeedback(feedback, 1000);
+  }
+
+  updateTTSToggleUI() {
+    if (this.ttsEnabled) {
+      this.elements.ttsToggle.classList.add("active");
+      this.elements.ttsToggle.setAttribute(
+        "title",
+        "Text-to-speech is ON - Click to disable"
+      );
+    } else {
+      this.elements.ttsToggle.classList.remove("active");
+      this.elements.ttsToggle.setAttribute(
+        "title",
+        "Text-to-speech is OFF - Click to enable"
+      );
+    }
+  }
+
+  showFeedback(message, duration = 2000) {
+    // Store the original hint content
+    const originalHint = this.elements.questionHint.textContent;
+
+    // Show the feedback message
+    this.elements.questionHint.textContent = message;
+    this.elements.questionHint.style.color = "#4ade80"; // Green color for feedback
+
+    // Restore the original hint after the duration
+    setTimeout(() => {
+      this.elements.questionHint.textContent = originalHint;
+      this.elements.questionHint.style.color = ""; // Reset color
+    }, duration);
+  }
+
   displayQuestion() {
     const currentDay = this.currentQuestions[this.currentQuestionIndex];
 
@@ -310,6 +459,13 @@ class JapaneseWeekQuiz {
     // Reset button states
     this.resetOptionButtons();
     this.elements.skipQuestionBtn.disabled = false;
+
+    // Auto-speak the question text (with a small delay for better UX)
+    if (this.ttsEnabled) {
+      setTimeout(() => {
+        this.speakCurrentQuestion();
+      }, 500);
+    }
   }
 
   displayEnglishOptions(correctAnswer) {
@@ -496,6 +652,27 @@ class JapaneseWeekQuiz {
 
       this.elements.reviewList.appendChild(reviewItem);
     });
+  }
+
+  speakCurrentQuestion() {
+    if (!this.textToSpeech.isSupported() || !this.ttsEnabled) {
+      if (!this.ttsEnabled) {
+        this.showFeedback("Text-to-speech is disabled", 1000);
+      } else {
+        console.warn("Text-to-speech not supported");
+      }
+      return;
+    }
+
+    const currentDay = this.currentQuestions[this.currentQuestionIndex];
+
+    if (this.isJapaneseToEnglish) {
+      // Speaking Japanese text
+      this.textToSpeech.speakJapanese(currentDay.japanese);
+    } else {
+      // Speaking English text
+      this.textToSpeech.speakEnglish(currentDay.english);
+    }
   }
 
   capitalizeFirst(str) {
