@@ -49,7 +49,6 @@ jobs:
           name: windows-builds
           path: |
             dist/*.exe
-            dist/*.exe.blockmap
 
       - name: Upload macOS artifacts
         if: matrix.os == 'macos-latest'
@@ -90,6 +89,44 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
+          body: |
+            ## 🎌 Japanese Week Quiz ${{ github.ref_name }}
+
+            An Electron desktop application to help you learn the days of the week in Japanese!
+
+            ### 📦 Download Options
+
+            **🪟 Windows Users:**
+            - `Japanese.Week.Quiz.Setup.${{ github.ref_name }}.exe` - **Recommended**: Full installer with Start Menu shortcuts
+            - `Japanese.Week.Quiz.${{ github.ref_name }}.exe` - Portable version (no installation required)
+
+            **🍎 macOS Users:**
+            - `Japanese.Week.Quiz-${{ github.ref_name }}.dmg` - **Recommended**: Standard Mac installer (Intel Macs)
+            - `Japanese.Week.Quiz-${{ github.ref_name }}-arm64.dmg` - Standard Mac installer (Apple Silicon M1/M2)
+            - `Japanese.Week.Quiz-${{ github.ref_name }}-mac.zip` - App bundle (Intel Macs)
+            - `Japanese.Week.Quiz-${{ github.ref_name }}-arm64-mac.zip` - App bundle (Apple Silicon M1/M2)
+
+            **🐧 Linux Users:**
+            - `Japanese.Week.Quiz-${{ github.ref_name }}.AppImage` - **Recommended**: Universal Linux app (works on any distro)
+            - `japanese-week-quiz_${{ github.ref_name }}_amd64.deb` - Debian/Ubuntu package installer
+            - `japanese-week-quiz-${{ github.ref_name }}.tar.gz` - Archive for manual installation
+
+            ### 🚀 Quick Start
+            1. Download the appropriate file for your operating system
+            2. **Windows**: Run the .exe installer or portable version
+            3. **macOS**: Open the .dmg file and drag to Applications
+            4. **Linux**: Make AppImage executable (`chmod +x`) and run
+
+            ### ✨ Features
+            - Two quiz modes: Japanese → English and English → Japanese
+            - Audio feedback for correct/incorrect answers
+            - Auto-advance after answering
+            - Skip functionality for difficult questions
+            - Score tracking and review mode
+            - Modern, gradient-based UI design
+
+            ---
+            *Built with Electron • Cross-platform • Open Source*
           files: |
             artifacts/windows-builds/*
             artifacts/macos-builds/*
