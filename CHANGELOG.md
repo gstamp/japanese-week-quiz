@@ -10,7 +10,7 @@ Initial release. Features include:
 - Audio feedback for correct and incorrect answers.
 - Auto next
 
-## [Unreleased]
+## 1.1.0
 
 ### Added
 - Text-to-speech functionality for question reading
